@@ -1,17 +1,10 @@
 # resilient-api-client
 
-A small `requests` wrapper adding a **circuit breaker** and structured
-logging for integrating with partner/ERP REST APIs that occasionally go
-down or slow to a crawl. Stops retrying (and stops flooding) a dead
-endpoint instead of piling up timeouts.
+A thin wrapper around `requests` that adds a circuit breaker and structured logging, for partner or ERP REST APIs that sometimes go down or become very slow. When an endpoint is dead, the client stops calling it for a while instead of piling up timeouts.
 
-## Why a circuit breaker instead of just retries
+## Why a circuit breaker and not only retries
 
-Retries alone are fine for a single blip; they make things worse when the
-downstream service is actually down, since every caller keeps hammering
-it. The breaker trips open after N consecutive failures, rejects calls
-immediately for a cooldown window, then allows a single probe call
-(half-open) before fully closing again.
+Retries handle a single failure well. When the service is actually down, they make it worse, because every caller keeps hitting it. The breaker opens after N consecutive failures and rejects calls right away during a cooldown. After that it lets one test call through (half-open) and closes again if it succeeds.
 
 ## Usage
 
@@ -41,4 +34,4 @@ ruff check .
 
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT, see [LICENSE](LICENSE).
